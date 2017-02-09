@@ -17,47 +17,47 @@ class ThreadManager: NSObject {
     
     //MARK: - public method
     func createThread() {
-        let thread = NSThread.init(target: self, selector: "printLog", object: nil)
+        let thread = Foundation.Thread.init(target: self, selector: "printLog", object: nil)
         thread.name = "myThread"
         thread.start()
     }
     
     func createQueue() {
-        let queue = NSOperationQueue()
+        let queue = OperationQueue()
         queue.name = "myQueue"
         queue.maxConcurrentOperationCount = 2
-        let operation = NSBlockOperation { () -> Void in
-            print("do operation1:", NSThread.currentThread())
+        let operation = BlockOperation { () -> Void in
+            print("do operation1:", Foundation.Thread.current)
         }
         
         operation.addExecutionBlock { () -> Void in
-            print("do operation2:", NSThread.currentThread())
+            print("do operation2:", Foundation.Thread.current)
         }
         
         operation.addExecutionBlock { () -> Void in
-            print("do operation3:", NSThread.currentThread())
+            print("do operation3:", Foundation.Thread.current)
         }
         
-        let operation2 = NSBlockOperation { () -> Void in
-            print("do operation4:", NSThread.currentThread())
+        let operation2 = BlockOperation { () -> Void in
+            print("do operation4:", Foundation.Thread.current)
         }
         
         queue.addOperation(operation)
         queue.addOperation(operation2)
-        queue.addOperationWithBlock { () -> Void in
-            print("do operation5:", NSThread.currentThread())
+        queue.addOperation { () -> Void in
+            print("do operation5:", Foundation.Thread.current)
         }
     }
     
     //MARK: - private method
-    private func printLog() {
+    fileprivate func printLog() {
         var a = 0
         repeat {
-            a++
+            a += 1
             print("times:",a)
             if a == 10 {
                 print("stop")
-                NSThread.currentThread().cancel()
+                Foundation.Thread.current.cancel()
                 break
             }
         } while (true)
